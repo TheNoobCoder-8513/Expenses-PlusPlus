@@ -1,0 +1,61 @@
+import { Theme as T } from "Theme.slint";
+import { Placeholder, Sidebar } from "Components/Components.slint";
+import { Home, Track, Goals, Records } from "Pages/Page.slint";
+
+
+export component UI inherits Window {
+
+    title: "Expenses";
+
+    background: T.bg1;
+    default-font-size: T.font5;
+
+    min-width: 1280px;
+    min-height: 720px;
+    preferred-height: self.min-height;
+    preferred-width: self.min-width;
+
+    HorizontalLayout {
+
+        in-out property <int> current-page-index: 2;
+
+        Rectangle {
+            background: T.bg2;
+            horizontal-stretch: 5;
+
+            VerticalLayout {
+
+                spacing: T.gap;
+                alignment: space-between;
+
+                upper-sidebar := Sidebar {
+                    buttons: ["Home", "Track", "Goals", "Records"];
+                    start: 0;
+                    alive-index: current-page-index;
+
+                    selected(id) => {
+                        current-page-index = id;
+                    }
+                }
+
+                lower-sidebar := Sidebar {
+                    buttons: ["Donate", "Settings"];
+                    start: 0 + upper-sidebar.buttons.length;
+                    alive-index: current-page-index;
+
+                    selected(id) => {
+                        current-page-index = id;
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            horizontal-stretch: 95;
+            if current-page-index == 0: Home { }
+            if current-page-index == 1: Track { }
+            if current-page-index == 2: Goals { }
+            if current-page-index == 3: Records { }
+        }
+    }
+}

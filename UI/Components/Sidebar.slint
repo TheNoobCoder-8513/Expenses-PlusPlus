@@ -1,0 +1,89 @@
+import { Theme as T } from "../Theme.slint";
+
+
+component Sidebar-Button inherits Rectangle {
+
+    in property <int> id: 0;
+    in property <bool> alive: false;
+    in property <string> title: "Button";
+    in property <length> font-size: T.font4;
+    in property <TextHorizontalAlignment> alignment: left;
+
+    callback clicked(int);
+
+    border-radius: T.bor-radius;
+
+    touch := TouchArea {
+        clicked => {
+            root.clicked(root.id);
+        }
+    }
+
+    HorizontalLayout {
+
+        padding-top: T.gap / 2;
+        padding-bottom: self.padding-top;
+        padding-left: T.gap;
+        padding-right: self.padding-left;
+
+        name := Text {
+            text: root.title;
+            font-size: root.font-size;
+            horizontal-alignment: root.alignment;
+            vertical-alignment: center;
+
+            states [
+                alive when alive: {
+                    color: T.bg1;
+                    font-weight: 800;
+                }
+                none when !touch.has-hover && !alive: {
+                    color: T.fg1;
+                }
+            ]
+        }
+    }
+
+    states [
+        hovered when touch.has-hover && !alive: {
+            background: T.bg3;
+            border-color: T.fg1.with-alpha(0.15);
+            border-width: 1px;
+        }
+        alive when alive: {
+            background: T.fg1.darker(0.1);
+        }
+        none when !touch.has-hover && !alive: {
+            background: transparent;
+        }
+    ]
+}
+
+export component Sidebar inherits Rectangle {
+
+    in property <int> start: 0;
+    in property <int> alive-index: 0;
+    in property <[string]> buttons: ["Button1", "Button2", "Button2"];
+    in property <TextHorizontalAlignment> alignment: left;
+    in property <length> font-size: T.font4;
+    in property <length> gap: 10px;
+
+    callback selected(int);
+
+    VerticalLayout {
+        spacing: root.gap;
+        padding: T.gap * 1.5;
+
+        for button[index] in buttons: Sidebar-Button {
+            title: button;
+            id: index + start;
+            alignment: root.alignment;
+            font-size: root.font-size;
+            alive: root.alive-index == index + start ? true : false;
+
+            clicked(id) => {
+                root.selected(id);
+            }
+        }
+    }
+}

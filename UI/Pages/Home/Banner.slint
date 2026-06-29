@@ -1,0 +1,30 @@
+import { Theme as T } from "../../Theme.slint";
+
+export component Banner inherits Rectangle {
+
+    VerticalLayout {
+        padding-left: 100px;
+        alignment: center;
+        spacing: T.gap * 2;
+
+        VerticalLayout {
+            alignment: center;
+            Text {
+                text: "Hey, Hi";
+                font-size: T.font2;
+            }
+
+            Text {
+                text: "Anshuman Kr.";
+                font-size: T.font1;
+                color: #15ff00;
+            }
+        }
+
+        Text {
+            text: "You have spent ₹ 1028 for shopping, \nand ₹ 780 for metro recharge, this week.";
+            font-size: T.font4;
+            color: T.fg3;
+        }
+    }
+}

@@ -1,0 +1,84 @@
+import { Theme as T } from "../Theme.slint";
+import { Header } from "Header.slint";
+
+
+export component HBarChart inherits Rectangle {
+
+    in property <length> bar-width: 20px;
+
+    private property <[int]> month: [
+        120,
+        45,
+        0,
+        85,
+        110,
+        1500,
+        350,
+        90,
+        65,
+        40,
+        115,
+        210,
+        0,
+        420,
+        75,
+        95,
+        130,
+        55,
+        0,
+        2400,
+        310,
+        85,
+        105,
+        50,
+        140,
+        600,
+        180,
+        0,
+        95,
+        125
+    ];
+
+    private property <int> max: 2400;
+
+    Flickable {
+        viewport-width: bar-width * month.length + (month.length - 1) * T.gap;
+        HorizontalLayout {
+            spacing: T.gap;
+            for day in month: Rectangle {
+                width: root.bar-width;
+                bar := Rectangle {
+                    y: parent.height - self.height;
+                    height: (parent.height) * day / max;
+                    background: T.fg3;
+                }
+
+                touch := TouchArea { }
+
+                background: touch.has-hover ? #ffffff21 : transparent;
+
+                Rectangle {
+                    background: T.fg1;
+                    border-radius: T.bor-radius / 2;
+
+                    height: self.preferred-height;
+                    width: self.preferred-width;
+
+                    visible: touch.has-hover;
+                    y: touch.mouse-y - self.preferred-height;
+                    x: + self.preferred-width;
+
+                    VerticalLayout {
+                        padding: T.gap / 2;
+                        text := Text {
+                            text: day;
+                            color: #090909;
+                            font-weight: 800;
+                            font-size: T.font5;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,44 @@
+import { Theme as T } from "../../Theme.slint";
+import {
+    Sidebar,
+    Header,
+    Button,
+    HBarChart,
+} from "../../Components/Components.slint";
+import { Track-Toolbar } from "Toolbar.slint";
+import { Track-Calendar } from "Calendar.slint";
+import { TabBar } from "../../Components/TabBar.slint";
+
+
+export component Track inherits Rectangle {
+
+    VerticalLayout {
+        padding: T.gap * 2;
+        spacing: T.gap * 2;
+
+        Header {
+            header: "Track";
+            description: "Track your savings and expenditures over time here";
+        }
+
+        content := Rectangle {
+            background: T.bg2;
+            border-radius: T.gap;
+
+            VerticalLayout {
+                padding: T.gap;
+                spacing: T.gap;
+
+                VerticalLayout {
+                    padding: T.gap;
+                    spacing: T.gap;
+
+                    Track-Toolbar { }
+
+                    Track-Calendar {
+                    }
+                }
+            }
+        }
+    }
+}

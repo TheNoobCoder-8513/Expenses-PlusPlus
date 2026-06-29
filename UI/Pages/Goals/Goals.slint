@@ -1,0 +1,71 @@
+
+import { Theme as T } from "../../Theme.slint";
+import { Header } from "../../Components/Components.slint";
+import { Goal-Card, Goal-Add-Card } from "GoalCard.slint";
+
+
+export component Goals inherits Rectangle {
+    VerticalLayout {
+        padding: T.gap * 2;
+        spacing: T.gap * 2;
+
+        Header {
+            header: "Goals";
+            description: "Manage your Goals about expenditures, savings here";
+        }
+
+        HorizontalLayout {
+            alignment: center;
+            spacing: T.gap * 2;
+
+            Rectangle {
+                border-radius: T.bor-radius;
+                border-width: 1px;
+                border-color: T.fg4;
+
+                VerticalLayout {
+                    spacing: T.gap;
+                    padding: T.gap * 2;
+
+                    Rectangle {
+                        background: T.bg3;
+                        border-radius: T.bor-radius;
+
+                        HorizontalLayout {
+                            padding: T.gap / 2;
+
+                            Rectangle {
+                                height: 40px;
+                            }
+                        }
+                    }
+
+                    view := Flickable {
+
+                        GridLayout {
+                            spacing: T.gap * 2;
+
+                            Goal-Add-Card {
+                                row: 0;
+                                col: 0;
+
+                                
+                            }
+
+                            for item[index] in 4: Goal-Card {
+                                width: self.preferred-width;
+
+                                private property <int> columns: 3;
+
+                                row: floor((index + 1) / columns);
+                                col: mod(index + 1, columns);
+
+                                
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

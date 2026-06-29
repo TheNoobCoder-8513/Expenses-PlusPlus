@@ -1,0 +1,40 @@
+import { Theme as T } from "../Theme.slint";
+
+export component LR-Gapped-Item inherits Rectangle {
+
+    in property <string> left-title;
+    in property <string> right-title;
+
+    in property <color> right-color: T.fg2;
+
+    background: T.bg3;
+    border-radius: T.bor-radius;
+
+    HorizontalLayout {
+        padding-top: T.gap / 2;
+        padding-bottom: self.padding-top;
+        padding-left: T.gap;
+        padding-right: self.padding-left;
+
+        spacing: T.gap * 2;
+
+        VerticalLayout {
+            spacing: T.gap / 2;
+            Text {
+                text: root.left-title;
+                font-size: T.font4;
+                color: T.fg2;
+            }
+
+            @children
+        }
+
+        Text {
+            text: "₹ " + root.right-title;
+            font-size: T.font4;
+            horizontal-alignment: right;
+            font-weight: 800;
+            color: root.right-color;
+        }
+    }
+}

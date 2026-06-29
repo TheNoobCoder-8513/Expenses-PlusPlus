@@ -1,0 +1,86 @@
+import { Theme as T } from "../../Theme.slint";
+import { Date, Time, DateTime } from "../DataTypes.slint";
+
+
+export struct RecordItemData { item: string, datetime: DateTime, amount: int }
+
+
+export component RecordsItem inherits Rectangle {
+
+    in property <RecordItemData> data: {
+        item: "Veg Momos, Fingers",
+        datetime: { date: { day: 21, month: 12, year: 2026 }, time: { hour: 18, minute: 06 } },
+        amount: -230
+    };
+
+    pure function getDateTime(date: Date, time: Time) -> string {
+        let day = date.day < 10 ? "0\{date.day}" : "\{date.day}";
+        let month = date.month < 10 ? "0\{date.month}" : "\{date.month}";
+        let year = "\{date.year}";
+
+        let hour = time.hour < 10 ? "0\{time.hour}" : "\{time.hour}";
+        let minute = time.minute < 10 ? "0\{time.minute}" : "\{time.minute}";
+
+        return day + "-" + month + "-" + year + "  " + hour + ":" + minute;
+    }
+
+    pure function getAmount(amount: int) -> string {
+        let is_negative = amount < 0;
+        let absolute_amount = is_negative ? abs(amount) : amount;
+        let prefix = is_negative ? "- ₹ " : "+ ₹ ";
+
+        return "\{prefix}\{absolute_amount}";
+    }
+
+    border-radius: T.gap / 2;
+    background: T.bg2;
+
+    HorizontalLayout {
+        padding-right: T.gap * 1.5;
+        padding-left: self.padding-right;
+        padding-top: T.gap / 2;
+        padding-bottom: self.padding-top;
+
+        spacing: T.gap;
+        alignment: space-between;
+
+        VerticalLayout {
+            spacing: 0px;
+
+            Text {
+                text: data.item;
+                font-size: T.font4;
+                color: T.fg2;
+                horizontal-alignment: left;
+                vertical-alignment: center;
+            }
+
+            Text {
+                text: getDateTime(data.datetime.date, data.datetime.time);
+                font-size: T.font5;
+                color: T.fg3;
+                horizontal-alignment: left;
+                vertical-alignment: center;
+            }
+        }
+
+        VerticalLayout {
+            spacing: T.gap / 2;
+            Text {
+                text: getAmount(data.amount);
+                font-size: T.font4;
+                font-weight: 800;
+                horizontal-alignment: right;
+                vertical-alignment: center;
+
+                color: {
+                    if data.amount > 0 {
+                        #00ff00ad
+                    } else {
+                        #ff0000ab
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,16 @@
+export component Placeholder inherits Rectangle {
+
+    in property <string> text: "Placeholder";
+
+    border-width: 1px;
+    border-color: white;
+
+    Text {
+        text: root.text;
+        height: parent.height;
+        width: parent.width;
+
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}

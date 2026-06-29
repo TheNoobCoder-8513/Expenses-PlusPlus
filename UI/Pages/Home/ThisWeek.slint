@@ -1,0 +1,46 @@
+import { Theme as T } from "../../Theme.slint";
+import { Header, LR-Gapped-Item } from "../../Components/Components.slint";
+
+
+export component ThisWeek inherits Rectangle {
+
+    in property <[{ category: string, amount: int }]> data: [
+        { category: "Fashion & Clothes", amount: 1480 },
+        { category: "Grocey", amount: 1120 },
+        { category: "Junk Food & Drinks", amount: 320 },
+        { category: "Gadgets", amount: 110 },
+        { category: "Metro recharge", amount: 300 },
+        { category: "Gifts", amount: 0 },
+        { category: "Lunch Food", amount: 40 },
+    ];
+
+    background: T.bg2;
+    border-radius: T.bor-radius;
+
+    VerticalLayout {
+        spacing: T.gap * 1.5;
+        padding-left: T.gap * 1.5;
+        padding-right: self.padding-left;
+        padding-top: T.gap;
+        padding-bottom: T.gap;
+
+        Header {
+            header: "This Week";
+            header-size: T.font3;
+            description: "Spent money on different categories";
+        }
+
+        Flickable {
+            VerticalLayout {
+                spacing: T.gap / 2;
+                alignment: start;
+
+                for data in root.data: LR-Gapped-Item {
+                    left-title: data.category;
+                    right-title: data.amount > 0 ? data.amount : abs(data.amount);
+                    right-color: data.amount > 0 ? #10bb00 : #c80000;
+                }
+            }
+        }
+    }
+}

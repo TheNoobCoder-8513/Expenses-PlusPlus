@@ -1,0 +1,67 @@
+export component Input inherits Rectangle {
+    in property <string> placeholder: "Placeholder";
+    in-out property <string> input: "Placeholder";
+
+    forward-focus: input-field;
+    HorizontalLayout {
+        padding: 10px;
+
+        touch := TouchArea {
+            clicked => {
+                input-field.focus();
+            }
+            Rectangle {
+
+                if !input-field.has-focus || input.is-empty: Text {
+                    height: 100%;
+                    width: 100%;
+                    text: "Hello";
+                }
+                background: root.background;
+
+                Rectangle {
+                    visible: input-field.has-focus;
+                    height: 20px;
+
+                    FocusScope {
+                        input-field := TextInput {
+                            text: input;
+                            width: max(parent.width, self.preferred-width);
+                            vertical-alignment: center;
+
+                            private property <length> margin: 1rem;
+                            cursor-position-changed(cursor-position) => {
+                                if cursor-position.x + self.x < margin {
+                                    self.x = - cursor-position.x + margin;
+                                } else if cursor-position.x + self.x > parent.width - margin - self.text-cursor-width {
+                                    self.x = parent.width - cursor-position.x - margin - self.text-cursor-width;
+                                }
+                            }
+
+                            edited => {
+                                root.input = input-field.text;
+                                debug(input);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+export component App inherits Window {
+    height: 600px;
+    width: self.height;
+
+    Rectangle {
+        clip: true;
+        border-color: white;
+        border-width: 1px;
+
+        height: 200px;
+        // width: 100px;
+        Input { }
+    }
+}

@@ -1,0 +1,67 @@
+import { Theme as T } from "../../Theme.slint";
+import { Header, HBarChart } from "../../Components/Components.slint";
+
+import { ThisWeek } from "ThisWeek.slint";
+import { Banner } from "Banner.slint";
+
+
+export component Home inherits Rectangle {
+    VerticalLayout {
+        padding: T.gap * 2;
+        spacing: T.gap * 2;
+
+        Header {
+            header: "Dashboard";
+            description: "Get a quick glance of all of your expenditures and savings";
+        }
+
+        VerticalLayout {
+            spacing: T.gap * 2;
+
+            HorizontalLayout {
+                Banner { }
+
+                chart := Rectangle {
+                    background: T.bg2;
+                    border-radius: T.bor-radius;
+                    width: 500px;
+                    // height: 250px;
+                }
+            }
+
+            HorizontalLayout {
+                spacing: T.gap * 2;
+                height: self.preferred-height;
+
+                ThisWeek {
+                    min-width: 300px;
+                    horizontal-stretch: 15;
+                }
+
+                Rectangle {
+                    horizontal-stretch: 85;
+                    border-radius: T.bor-radius;
+                    border-width: 1px;
+                    border-color: T.bor-color;
+                    background: T.bg2;
+
+                    VerticalLayout {
+                        spacing: T.gap * 1.5;
+                        padding-left: T.gap * 1.5;
+                        padding-right: self.padding-left;
+                        padding-top: T.gap;
+                        padding-bottom: T.gap;
+
+                        Header {
+                            header: "₹ 37,090";
+                            description: "Track your current balance here";
+                            header-size: T.font3;
+                        }
+
+                        HBarChart { }
+                    }
+                }
+            }
+        }
+    }
+}

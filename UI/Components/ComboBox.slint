@@ -1,0 +1,149 @@
+import { Theme as T } from "../Theme.slint";
+
+component ComboBox-Button inherits Rectangle {
+
+    in property <int> id: 0;
+    in property <bool> alive: false;
+    in property <string> title: "Button";
+    in property <length> font-size: T.font4;
+    in property <TextHorizontalAlignment> alignment: left;
+
+    callback clicked(int);
+
+    border-radius: T.bor-radius;
+
+    touch := TouchArea {
+        clicked => {
+            root.clicked(root.id);
+        }
+    }
+
+    HorizontalLayout {
+
+        padding-top: T.gap / 2;
+        padding-bottom: self.padding-top;
+        padding-left: T.gap;
+        padding-right: self.padding-left;
+
+        name := Text {
+            text: root.title;
+            font-size: root.font-size;
+            horizontal-alignment: root.alignment;
+            vertical-alignment: center;
+
+            states [
+                alive when alive: {
+                    color: T.bg1;
+                    font-weight: 800;
+                }
+                none when !touch.has-hover && !alive: {
+                    color: T.fg1;
+                }
+            ]
+        }
+    }
+
+    states [
+        hovered when touch.has-hover && !alive: {
+            background: T.bg3;
+            border-color: T.fg1.with-alpha(0.15);
+            border-width: 1px;
+        }
+        alive when alive: {
+            background: T.fg1.darker(0.1);
+        }
+        none when !touch.has-hover && !alive: {
+            background: transparent;
+        }
+    ]
+}
+
+export component ComboBox inherits Rectangle {
+    in property <[string]> data: [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "Novemeber",
+        "December"
+    ];
+
+    in property <color> font-color: T.fg1;
+    in property <length> font-size: T.font5;
+    in-out property <int> active: 0;
+    in property <length> popup-height: 300px;
+
+    background: T.bg2;
+    border-radius: T.bor-radius;
+
+    touch := TouchArea {
+        clicked => {
+            options.show();
+        }
+    }
+
+    layout:= HorizontalLayout {
+        padding-left: T.gap ;
+        padding-right: self.padding-left;
+        padding-top: T.gap / 2;
+        padding-bottom: self.padding-top;
+        spacing: T.gap;
+
+        alignment: space-between;
+
+        Text {
+            text: active < data.length ? data[active] : "";
+            color: font-color;
+            font-size: root.font-size;
+            vertical-alignment: center;
+            height: 100%;
+        }
+
+        VerticalLayout {
+            alignment: center;
+            Image {
+                source: @image-url("../Assets/Icons/Down.png");
+                height: self.width;
+                width: root.font-size;
+                colorize: font-color;
+
+
+            }
+        }
+    }
+
+    options := PopupWindow {
+        width: max(self.preferred-width, layout.width);
+        height: min(root.popup-height, self.preferred-height);
+
+        close-policy: close-on-click;
+
+        Rectangle {
+            background: T.bg2.with-alpha(1.0);
+            border-radius: T.bor-radius;
+            Flickable {
+                VerticalLayout {
+                    padding: T.gap;
+                    spacing: T.gap / 2;
+                    alignment: start;
+
+                    for name[index] in data: ComboBox-Button {
+                        title: name;
+                        id: index;
+                        font-size: T.font5;
+
+                        clicked(id) => {
+                            active = id;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

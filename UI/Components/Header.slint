@@ -1,0 +1,34 @@
+import { Theme as T } from "../Theme.slint";
+
+
+// 'header' - primary text
+// 'description' - secondary text
+// Set their sizes using _var_-size
+export component Header inherits Rectangle {
+
+    in property <string> header: "Header";
+    in property <string> description: "This is a description of header";
+    in property <length> header-size: T.font2;
+    in property <length> description-size: T.font5;
+
+    height: self.preferred-height;
+
+    VerticalLayout {
+        alignment: start;
+
+        Text {
+            text: root.header;
+            font-size: header-size;
+            horizontal-alignment: left;
+            vertical-alignment: center;
+        }
+
+        Text {
+            text: root.description;
+            font-size: description-size;
+            horizontal-alignment: left;
+            vertical-alignment: center;
+            color: T.fg3;
+        }
+    }
+}

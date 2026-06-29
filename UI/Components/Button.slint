@@ -1,0 +1,62 @@
+import { Theme as T } from "../Theme.slint";
+
+export component Button inherits Rectangle {
+
+    in property <string> title: "Button";
+    in property <image> image: @image-url("../Assets/Icons/Add.png");
+    in property <length> font-size: T.font4;
+    in property <color> font-color: black;
+    in property <color> bg-color: #00ff15;
+    // in property <bool> accent: true;
+    
+    callback clicked();
+
+    border-radius: 10px;
+
+    touch := TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
+
+    HorizontalLayout {
+        padding-top: T.gap / 2;
+        padding-bottom: self.padding-top;
+        padding-left: T.gap;
+        padding-right: self.padding-left;
+
+        spacing: T.gap / 2;
+
+        VerticalLayout {
+            alignment: center;
+
+            if image.height != 0 && image.width != 0: Image {
+                source: root.image;
+                height: title.preferred-height;
+                width: self.height;
+                colorize: root.font-color;
+            }
+        }
+
+        title := Text {
+            text: root.title;
+            color: root.font-color;
+            font-weight: 800;
+            font-size: root.font-size;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+
+    states [
+        clicked when touch.pressed: {
+            background: bg-color.darker(0.4);
+        }
+        hovered when touch.has-hover: {
+            background: bg-color.darker(0.2);
+        }
+        none when !touch.has-hover: {
+            background: bg-color;
+        }
+    ]
+}
