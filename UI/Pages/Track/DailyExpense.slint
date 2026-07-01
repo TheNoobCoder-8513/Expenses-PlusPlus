@@ -1,5 +1,5 @@
 import { Theme as T } from "../../Theme.slint";
-import { Header, LR-Gapped-Item } from "../../Components/Components.slint";
+import { Header, LR-List-Item } from "../../Components/Components.slint";
 import { Button } from "../../Components/Button.slint";
 
 export struct ExpenseItem {
@@ -21,18 +21,18 @@ export component Detail-Daily-Expense inherits Rectangle {
     border-color: T.fg3;
 
     VerticalLayout {
-        padding: T.gap * 2;
+        padding: T.gap;
         spacing: T.gap;
 
         HorizontalLayout {
             alignment: space-between;
             spacing: T.gap * 2;
 
-            Header {
-                header: "Daily Expenses";
-                description: "Daily account here";
-                header-size: T.font3;
-            }
+            // Header {
+            //     header: "Daily Expenses";
+            //     description: "Daily account here";
+            //     header-font-size: T.font3;
+            // }
 
             Button {
                 title: "Add";
@@ -43,7 +43,6 @@ export component Detail-Daily-Expense inherits Rectangle {
         }
 
         HorizontalLayout {
-            padding: T.gap;
             spacing: T.gap;
 
             Rectangle {
@@ -55,9 +54,10 @@ export component Detail-Daily-Expense inherits Rectangle {
                     spacing: T.gap / 2;
 
                     HorizontalLayout {
-                        padding-left: T.gap;
+                        padding-left: T.gap * 2;
                         padding-right: self.padding-left;
                         spacing: T.gap;
+
                         Text {
                             text: "Title";
                             font-size: T.font4;
@@ -80,7 +80,7 @@ export component Detail-Daily-Expense inherits Rectangle {
                                 padding: T.gap;
                                 spacing: T.gap;
 
-                                for item in data.items: LR-Gapped-Item {
+                                for item in data.items: LR-List-Item {
                                     left-title: item.name;
                                     right-title: item.amount > 0 ? item.amount : abs(item.amount);
                                     background: T.bg3;

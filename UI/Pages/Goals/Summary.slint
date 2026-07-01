@@ -1,0 +1,62 @@
+import {
+    Card,
+    SVL,
+    Header,
+    Base3,
+    Stat-Card,
+} from "../../Components/Components.slint";
+import { LR-Text-Item } from "../../Components/Item.slint";
+import { Theme as T } from "../../Theme.slint";
+import { Goal-Detail } from "../../DataTypes.slint";
+
+export component Goal-Summary inherits Card {
+    card-header: { label: "Summary", desc: "Summary about user goals" };
+
+    in property <{ total: float, frozen: float, goals: [Goal-Detail] }> data;
+
+    VerticalLayout {
+        spacing: T.gap * 2;
+        
+
+        Stat-Card {
+            width: self.preferred-width;
+            background: T.bg3;
+            stat: { label: root.data.total - root.data.frozen, desc: "Safe Amount" };
+            stat-font-size: { label-size: T.font3, desc-size: T.font4 };
+        }
+
+        Base3 {
+            SVL {
+                alignment: root.data.goals.length == 0 ? stretch: start;
+                Header {
+                    header-font-size: { label-size: T.font4, desc-size: T.font5 };
+                    header: { label: "Frozen Capital", desc: "Breakup of the frozen funds for goals" };
+                }
+
+                if root.data.goals.length > 0: SVL {
+                    for item in root.data.goals: LR-Text-Item {
+                        values: { lval: item.name, rval: item.saved };
+                        font-color: T.fg2;
+                    }
+
+                    Rectangle {
+                        height: 1px;
+                        background: T.fg1;
+                    }
+
+                    LR-Text-Item {
+                        values: { lval: "Total Frozen Amount", rval: root.data.frozen };
+                    }
+                }
+
+                if root.data.goals.length == 0: Text {
+                    text: "No\nGoals";
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                    font-size: T.font3;
+                    color: T.fg3;
+                }
+            }
+        }
+    }
+}

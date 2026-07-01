@@ -1,71 +1,79 @@
 
 import { Theme as T } from "../../Theme.slint";
-import { Header } from "../../Components/Components.slint";
+import {
+    Header,
+    VL,
+    HL,
+    Base2,
+    Base3,
+    Card,
+} from "../../Components/Components.slint";
 import { Goal-Card, Goal-Add-Card } from "GoalCard.slint";
+import { New-Goal-Form } from "NewGoal.slint";
+import { Page, SVL } from "../../Components/Base.slint";
+import { Goal-Detail } from "../../DataTypes.slint";
+import { Goal-Summary } from "Summary.slint";
+import { Glue } from "../../Glue.slint";
 
 
-export component Goals inherits Rectangle {
-    VerticalLayout {
-        padding: T.gap * 2;
-        spacing: T.gap * 2;
+export component Goals inherits Page {
+    private property <float> total-amount: Glue.get_TotalAmount();
+    private property <float> frozen-amount: Glue.get_FrozenAmount();
+    private property <[Goal-Detail]> goals: Glue.get_Goals();
 
-        Header {
-            header: "Goals";
-            description: "Manage your Goals about expenditures, savings here";
+    min-width: 800px;
+    max-width: 1200px;
+    page-header: { label: "Goals", desc: "Manage your Goals about expenditures, savings here" };
+
+    HL {
+
+        detail := Goal-Summary {
+            min-width: 360px;
+            data: { total: root.total-amount, frozen:root.frozen-amount, goals: root.goals };
         }
 
-        HorizontalLayout {
-            alignment: center;
-            spacing: T.gap * 2;
+        Flickable {
+            HL {
+                alignment: space-around;
+                VL {
 
-            Rectangle {
-                border-radius: T.bor-radius;
-                border-width: 1px;
-                border-color: T.fg4;
+                    spacing: T.gap * 2;
+                    alignment: goals.length > 0 ? start : center;
 
-                VerticalLayout {
-                    spacing: T.gap;
-                    padding: T.gap * 2;
+                    Goal-Add-Card {
+                        clicked => { add.show(); }
+                        add := PopupWindow {
+                            width: self.preferred-width;
 
-                    Rectangle {
-                        background: T.bg3;
-                        border-radius: T.bor-radius;
+                            close-policy: no-auto-close;
 
-                        HorizontalLayout {
-                            padding: T.gap / 2;
+                            New-Goal-Form {
+                                border-width: 1px;
+                                border-color: T.fg3;
 
-                            Rectangle {
-                                height: 40px;
+                                create-clicked => {
+                                    parent.close()
+                                }
+
+                                discard-clicked => {
+                                    parent.close();
+                                }
                             }
                         }
                     }
 
-                    view := Flickable {
-
-                        GridLayout {
-                            spacing: T.gap * 2;
-
-                            Goal-Add-Card {
-                                row: 0;
-                                col: 0;
-
-                                
-                            }
-
-                            for item[index] in 4: Goal-Card {
-                                width: self.preferred-width;
-
-                                private property <int> columns: 3;
-
-                                row: floor((index + 1) / columns);
-                                col: mod(index + 1, columns);
-
-                                
-                            }
+                    for item[index] in goals: Goal-Card {
+                        data: item;
+                        min-width: 600px;
+                        clicked => {
                         }
                     }
                 }
             }
         }
+
+        // Goal-Detail {
+        //     min-width: 400px;
+        // }
     }
 }

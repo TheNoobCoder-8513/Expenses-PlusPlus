@@ -1,153 +1,97 @@
 import { Theme as T } from "../../Theme.slint";
-import { Header } from "../../Components/Components.slint";
+import {
+    Header,
+    Card,
+    Base3,
+    VL,
+    Stat-Card,
+    HL,
+} from "../../Components/Components.slint";
+import { Goal-Detail } from "../../DataTypes.slint";
+import { SVL } from "../../Components/Base.slint";
 
 
-export component Goal-Card inherits Rectangle {
-    in property <string> title: "My Goal";
-    in property <int> amount: 45000;
-    in property <int> saved: 22200;
+export component Goal-Card inherits Card {
 
-    height: self.preferred-height;
+    in property <Goal-Detail> data;
 
-    private property <float> percent: root.saved / root.amount * 100;
+    card-header: { label: data.name, desc: data.date + "   " + data.time };
+    card-header-color: { label-color: T.fg2, desc-color: T.fg3 };
 
-    background: T.bg2;
-    border-radius: T.bor-radius;
-    border-width: tc.has-hover ? 2px: 1px;
-    border-color: {
-        if tc.has-hover { #0073ff }
-        else if percent < 20.00 { #ff0000; }
-        else if percent < 40.00 { #ff6f00; }
-        else if percent < 80.00 { #ffb300a4; }
-        else {
-            #00ff3c;
+    // height: self.preferred-height;
+    border-width: 2px;
+    border-color: self.has-hover ? #0080ffbe : transparent;
+
+    private property <float> percent: root.data.saved / root.data.total * 100;
+
+    contents := VerticalLayout {
+        spacing: T.gap;
+
+        HL {
+            alignment: start;
+
+            for item in [
+                { title: "Total Amount", amount: root.data.total },
+                { title: "Saved Amount", amount:root.data.saved }
+            ]: Stat-Card {
+                background: T.bg3;
+                stat: { label: item.amount, desc: item.title };
+                stat-font-size: { label-size: T.font4, desc-size: T.font5 };
+            }
         }
-    }
 
-    tc := TouchArea { }
-
-    VerticalLayout {
-        padding: T.gap * 2;
-        spacing: 100px;
-
-        Header {
-            header: title;
-            description: "24th march 2026";
-            header-size: T.font3;
-        }
-
-        contents := VerticalLayout {
-            // padding: T.gap;
-            spacing: T.gap;
+        Base3 {
             height: self.preferred-height;
+            VL {
+                padding: T.gap;
+                HL {
+                    Text {
+                        text: "Progress";
+                        font-size: T.font4;
+                        color: T.fg2;
+                        horizontal-alignment: left;
+                        vertical-alignment: center;
+                    }
 
-            HorizontalLayout {
-                spacing: T.gap;
-                alignment: start;
+                    Text {
+                        text: percent.to-fixed(2) + " %";
+                        font-size: T.font4;
+                        horizontal-alignment: right;
+                        vertical-alignment: center;
 
-                for item in [
-                    { title: "Total Amount", amount: root.amount },
-                    { title: "Saved Amount", amount:root.saved }
-                ]: Rectangle {
-                    background: T.bg3;
-                    border-radius: T.bor-radius;
-
-                    VerticalLayout {
-                        spacing: T.gap / 2;
-                        padding-left: T.gap;
-                        padding-right: self.padding-left;
-                        padding-top: T.gap / 2;
-                        padding-bottom: self.padding-top;
-                        alignment: space-between;
-                        height: self.preferred-height;
-
-                        Text {
-
-                            text: "₹ " + item.amount;
-                            font-size: T.font4;
-                            color: T.fg2;
-                            horizontal-alignment: left;
-                            vertical-alignment: center;
-                        }
-
-                        Text {
-                            text: item.title;
-                            font-size: T.font4;
-                            color: T.fg3;
-                            horizontal-alignment: left;
-                            vertical-alignment: center;
+                        color: {
+                            if percent < 20.00 { #ff3636; }
+                            else if percent < 40.00 { #ff9114; }
+                            else if percent < 80.00 { #51aeff; }
+                            else {
+                                #00ff3c;
+                            }
                         }
                     }
                 }
-            }
 
-            Rectangle {
-                background: T.bg3;
-                border-radius: T.bor-radius;
-                height: self.preferred-height;
+                fill-chart := Rectangle {
+                    height: 20px;
+                    border-radius: T.bor-radius;
+                    background: T.bg1;
 
-                VerticalLayout {
-                    padding: T.gap;
-                    spacing: T.gap;
-
-                    HorizontalLayout {
-                        Text {
-                            text: "Progress";
-                            font-size: T.font4;
-                            color: T.fg2;
-                            horizontal-alignment: left;
-                            vertical-alignment: center;
-                        }
-
-                        Text {
-
-                            text: percent.to-fixed(2) + " %";
-                            font-size: T.font4;
-                            horizontal-alignment: right;
-                            vertical-alignment: center;
-
-                            color: {
-                                if percent < 20.00 { #ff0000; }
-                                else if percent < 40.00 { #ff6f00; }
-                                else if percent < 80.00 { #ffb300; }
-                                else {
-                                    #00ff3c;
-                                }
-                            }
-                        }
-                    }
-
-                    bar-chart := Rectangle {
-                        height: 20px;
+                    Rectangle {
                         border-radius: T.bor-radius;
-                        background: T.bg4;
+                        border-width: 1px;
 
-                        Rectangle {
-                            border-radius: T.bor-radius;
-                            border-width: 1px;
-                            border-color: {
-                                if percent < 20.00 { #ff0000; }
-                                else if percent < 40.00 { #ff6f00; }
-                                else if percent < 80.00 { #ffb300; }
-                                else {
-                                    #00ff3c;
-                                }
+                        background: {
+                            if percent < 20.00 { #ff0000ce; }
+                            else if percent < 40.00 { #ff8400b6; }
+                            else if percent < 80.00 { #0088ffbb; }
+                            else {
+                                #00ff3ca4;
                             }
-
-                            background: {
-                                if percent < 20.00 { #ff00002a; }
-                                else if percent < 40.00 { #ff6f0021; }
-                                else if percent < 80.00 { #ffb30033; }
-                                else {
-                                    #00ff3c2a;
-                                }
-                            }
-
-                            height: 10px;
-                            x: 5px;
-                            y: 5px;
-                            width: (parent.width - 10px) * saved / amount;
                         }
+
+                        height: 10px;
+                        x: 5px;
+                        y: 5px;
+                        width: (parent.width - 10px) * root.percent / 100;
                     }
                 }
             }
@@ -156,15 +100,17 @@ export component Goal-Card inherits Rectangle {
 }
 
 
+
 export component Goal-Add-Card inherits Rectangle {
-    border-width: tc.has-hover ? 2px: 1px;
+    border-width: tc.has-hover ? 2px : 1px;
     border-color: tc.has-hover ? #0055ffbd : #00ff3395;
     background: tc.has-hover ? T.bg1 : T.bg2;
     border-radius: T.bor-radius;
 
-    VerticalLayout {
+    callback clicked();
+
+    SVL {
         alignment: center;
-        padding: T.gap;
 
         Text {
             text: "+";
@@ -180,5 +126,7 @@ export component Goal-Add-Card inherits Rectangle {
         }
     }
 
-    tc := TouchArea { }
+    tc := TouchArea {
+        clicked => { root.clicked(); }
+    }
 }

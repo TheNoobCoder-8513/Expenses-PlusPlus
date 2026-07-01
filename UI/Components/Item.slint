@@ -1,6 +1,7 @@
 import { Theme as T } from "../Theme.slint";
+import { HL } from "Base.slint";
 
-export component LR-Gapped-Item inherits Rectangle {
+export component LR-List-Item inherits Rectangle {
 
     in property <string> left-title;
     in property <string> right-title;
@@ -36,5 +37,22 @@ export component LR-Gapped-Item inherits Rectangle {
             font-weight: 800;
             color: root.right-color;
         }
+    }
+}
+
+export component LR-Text-Item inherits HL {
+    in property <{ lval: string, rval: string }> values: { lval: "Left", rval: "Right" };
+    in property <color> font-color: T.fg2;
+    in property <length> font-size;
+
+    height: self.preferred-height;
+    
+    alignment: space-between;
+
+    for item in [values.lval, values.rval]: Text {
+        text: item;
+        color: root.font-color;
+        font-size: root.font-size;
+        vertical-alignment: center;
     }
 }

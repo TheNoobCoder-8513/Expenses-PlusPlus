@@ -3,10 +3,11 @@ import { Theme as T } from "../Theme.slint";
 export component Button inherits Rectangle {
 
     in property <string> title: "Button";
-    in property <image> image: @image-url("../Assets/Icons/Add.png");
+    in property <image> image: @image-url("");
     in property <length> font-size: T.font4;
-    in property <color> font-color: black;
-    in property <color> bg-color: #00ff15;
+    in property <color> font-color: T.bg1;
+    in property <color> bg-color: T.fg1;
+    in property <LayoutAlignment> alignment: center;
     // in property <bool> accent: true;
     
     callback clicked();
@@ -24,7 +25,7 @@ export component Button inherits Rectangle {
         padding-bottom: self.padding-top;
         padding-left: T.gap;
         padding-right: self.padding-left;
-
+        alignment: root.alignment;
         spacing: T.gap / 2;
 
         VerticalLayout {

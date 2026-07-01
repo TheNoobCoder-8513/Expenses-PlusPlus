@@ -1,12 +1,12 @@
 import { Theme as T } from "../Theme.slint";
 import { Header } from "Header.slint";
+import { Base2, HL } from "Base.slint";
 
 
-export component HBarChart inherits Rectangle {
-
+component HeightChart inherits Base2 {
     in property <length> bar-width: 20px;
-
-    private property <[int]> month: [
+    in property <int> max-val: 2400;
+    private property <[int]> data: [
         120,
         45,
         0,
@@ -39,17 +39,97 @@ export component HBarChart inherits Rectangle {
         125
     ];
 
-    private property <int> max: 2400;
+    private property <length> required-width: data.length * bar-width + (data.length - 1) * T.gap + 2 * T.gap;
 
-    Flickable {
-        viewport-width: bar-width * month.length + (month.length - 1) * T.gap;
-        HorizontalLayout {
-            spacing: T.gap;
-            for day in month: Rectangle {
-                width: root.bar-width;
+    if root.width > required-width: HL {
+        spacing: T.gap * 2;
+        for day in data: Rectangle {
+            bar := Rectangle {
+                y: parent.height - self.height;
+                height: (parent.height) * day / max-val;
+                background: T.fg3;
+            }
+
+            touch := TouchArea { }
+
+            background: touch.has-hover ? #ffffff21 : transparent;
+
+            Rectangle {
+                background: T.fg1;
+                border-radius: T.bor-radius / 2;
+
+                height: self.preferred-height;
+                width: self.preferred-width;
+
+                visible: touch.has-hover;
+                y: touch.mouse-y - self.preferred-height;
+                x: + self.preferred-width;
+
+                VerticalLayout {
+                    padding: T.gap / 2;
+                    text := Text {
+                        text: day;
+                        color: #090909;
+                        font-weight: 800;
+                        font-size: T.font5;
+                    }
+                }
+            }
+        }
+    }
+}
+
+export component HBarChart {
+    in property <length> bar-width: 20px;
+    in property <int> max-val: 2400;
+
+    //Mock data
+    private property <[int]> data: [
+        120,
+        45,
+        0,
+        85,
+        110,
+        1500,
+        350,
+        90,
+        65,
+        40,
+        115,
+        210,
+        0,
+        420,
+        75,
+        95,
+        130,
+        55,
+        0,
+        2400,
+        310,
+        85,
+        105,
+        50,
+        140,
+        600,
+        180,
+        0,
+        95,
+        125
+    ];
+
+    private property <length> required-width: data.length * bar-width + (data.length - 1) * T.gap + 2 * T.gap;
+
+    if root.width > required-width:
+        HeightChart { }
+
+    if root.width < required-width: Flickable {
+        viewport-width: required-width;
+        HL {
+            for day in data: Rectangle {
                 bar := Rectangle {
+                    width: root.bar-width;
                     y: parent.height - self.height;
-                    height: (parent.height) * day / max;
+                    height: (parent.height) * day / max-val;
                     background: T.fg3;
                 }
 
@@ -79,6 +159,62 @@ export component HBarChart inherits Rectangle {
                     }
                 }
             }
+        }
+    }
+}
+
+
+
+
+struct PieSlice {
+    start-angle: angle,
+    end-angle: angle,
+    color: color,
+}
+
+export component PieChart inherits Window {
+    width: 450px;
+    height: 450px;
+    title: "Slint Pie Chart";
+
+    
+
+    private property <[PieSlice]> slices: [
+        { start-angle: 0deg,   end-angle: 36deg,  color: #FF5733 },
+        { start-angle: 36deg,  end-angle: 108deg, color: #33FF57 },
+        { start-angle: 108deg, end-angle: 216deg, color: #3357FF },
+        { start-angle: 216deg, end-angle: 306deg, color: #F1C40F },
+        { start-angle: 306deg, end-angle: 360deg, color: #9B59B6 },
+    ];
+
+    Rectangle {
+        width: 400px;
+        height: 400px;
+        background: #f0f0f0;
+        border-radius: self.width / 2;
+        clip: true;
+
+        for slice in root.slices : Rectangle {
+            width: 100%;
+            height: 100%;
+            
+            background: @conic-gradient(
+                transparent slice.start-angle,
+                slice.color slice.start-angle,
+                slice.color slice.end-angle,
+                transparent slice.end-angle
+            );
+
+            Text {
+                text: slice.start-angle / 1deg;
+            }
+        }
+        
+        Rectangle {
+            width: 150px;
+            height: 150px;
+            background: #ffffff;
+            border-radius: self.width / 2;
         }
     }
 }

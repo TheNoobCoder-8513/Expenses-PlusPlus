@@ -1,0 +1,51 @@
+import { Theme as T } from "../Theme.slint";
+import { Base3, SVL, Base4, Base2 } from "Base.slint";
+import { LR-Text-Item } from "Item.slint";
+
+export component LR-Text-Table inherits Base2 {
+    in property <[{ lval: string, rval: string }]> data;
+    in property <{ lval: string, rval: string }> col-title;
+
+    if data.length > 0: SVL {
+        spacing: T.gap / 2;
+
+        VerticalLayout {
+            padding: T.gap / 2;
+            padding-left: T.gap;
+            padding-right: self.padding-left;
+
+            LR-Text-Item {
+                values: { lval: col-title.lval, rval: col-title.rval };
+                font-size: T.font4;
+                font-color: T.fg1;
+            }
+
+            Rectangle {
+                height: 1px;
+                background: T.fg2;
+            }
+        }
+
+        Flickable {
+            content := VerticalLayout {
+                spacing: T.gap / 2;
+                for item[in] in data: Base3 {
+                    HorizontalLayout {
+                        padding: T.gap / 2;
+                        padding-left: T.gap;
+                        padding-right: self.padding-left;
+
+                        LR-Text-Item {
+                            values: { lval: item.lval, rval: item.rval };
+                            font-size: (T.font5 + T.font4) / 2;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if data.length == 0: Text {
+        text: "No data available";
+    }
+}

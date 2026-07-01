@@ -1,0 +1,33 @@
+import { Theme as T } from "../../Theme.slint";
+import {
+    Header,
+    LR-List-Item,
+    LR-Text-Table,
+} from "../../Components/Components.slint";
+import { Card, Base1, VL } from "../../Components/Base.slint";
+
+
+export component Home-Today inherits Card {
+
+    card-header: { label: "Today Expenses", desc: "Your daily expenses" };
+
+    in property <[{ lval: string, rval: string }]> data: [
+        { lval: "Fashion & Clothes", rval: 1480 },
+        { lval: "Grocey", rval: 1120 },
+        { lval: "Junk Food & Drinks", rval: 320 },
+        { lval: "Gadgets", rval: 110 },
+        { lval: "Metro recharge", rval: 300 },
+        { lval: "Gifts", rval: 0 },
+        { lval: "Lunch Food", rval: 40 },
+    ];
+
+    Base1 {
+        VL {
+            padding: T.gap;
+            LR-Text-Table {
+                col-title: { lval: "Item", rval: "Amount" };
+                data: root.data;
+            }
+        }
+    }
+}

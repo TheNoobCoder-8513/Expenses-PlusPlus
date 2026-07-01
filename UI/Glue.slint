@@ -1,0 +1,12 @@
+import { Date-Detail, Goal-Detail, Record-Detail } from "DataTypes.slint";
+
+export global Glue {
+    pure callback get_FrozenAmount() -> float;
+    pure callback get_TotalAmount() -> float;
+
+    pure callback get_DateDetail() -> Date-Detail;
+
+    pure callback get_Goals() -> [Goal-Detail];
+
+    pure callback get_Records() -> [Record-Detail];
+}

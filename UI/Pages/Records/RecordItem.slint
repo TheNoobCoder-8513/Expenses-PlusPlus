@@ -1,84 +1,100 @@
 import { Theme as T } from "../../Theme.slint";
 import { Date, Time, DateTime } from "../DataTypes.slint";
+import { Base3, HL } from "../../Components/Components.slint";
+import { Base4, Base2, VL, SVL, Base1 } from "../../Components/Base.slint";
 
 
 export struct RecordItemData { item: string, datetime: DateTime, amount: int }
 
 
-export component RecordsItem inherits Rectangle {
+export component RecordsItem inherits Base3 {
 
-    in property <RecordItemData> data: {
-        item: "Veg Momos, Fingers",
-        datetime: { date: { day: 21, month: 12, year: 2026 }, time: { hour: 18, minute: 06 } },
-        amount: -230
-    };
+    in property <[string]> data:["Momos", "12th Mar 2026", "12:08 AM", "Fast Food", "Deduct", "500"];
 
-    pure function getDateTime(date: Date, time: Time) -> string {
-        let day = date.day < 10 ? "0\{date.day}" : "\{date.day}";
-        let month = date.month < 10 ? "0\{date.month}" : "\{date.month}";
-        let year = "\{date.year}";
-
-        let hour = time.hour < 10 ? "0\{time.hour}" : "\{time.hour}";
-        let minute = time.minute < 10 ? "0\{time.minute}" : "\{time.minute}";
-
-        return day + "-" + month + "-" + year + "  " + hour + ":" + minute;
-    }
-
-    pure function getAmount(amount: int) -> string {
-        let is_negative = amount < 0;
-        let absolute_amount = is_negative ? abs(amount) : amount;
-        let prefix = is_negative ? "- ₹ " : "+ ₹ ";
-
-        return "\{prefix}\{absolute_amount}";
-    }
-
-    border-radius: T.gap / 2;
-    background: T.bg2;
-
-    HorizontalLayout {
-        padding-right: T.gap * 1.5;
-        padding-left: self.padding-right;
+    HL {
         padding-top: T.gap / 2;
         padding-bottom: self.padding-top;
-
-        spacing: T.gap;
+        padding-left: T.gap;
+        padding-right: self.padding-left;
+        spacing: T.gap * 2;
         alignment: space-between;
 
         VerticalLayout {
-            spacing: 0px;
+            spacing: T.gap / 2;
 
             Text {
-                text: data.item;
-                font-size: T.font4;
-                color: T.fg2;
+                text: data[0];
+                font-size: T.font3;
+                color: T.fg1;
                 horizontal-alignment: left;
                 vertical-alignment: center;
             }
 
-            Text {
-                text: getDateTime(data.datetime.date, data.datetime.time);
-                font-size: T.font5;
-                color: T.fg3;
-                horizontal-alignment: left;
-                vertical-alignment: center;
+            HorizontalLayout {
+                spacing: T.gap * 2;
+
+                Text {
+                    text: data[1];
+                    font-size: T.font5;
+                    color: T.fg2;
+                    horizontal-alignment: left;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    text: data[2];
+                    font-size: T.font5;
+                    color: T.fg2;
+                    horizontal-alignment: left;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    text: data[3];
+                    font-size: T.font5;
+                    color: T.fg2;
+                    horizontal-alignment: left;
+                    vertical-alignment: center;
+                }
             }
         }
 
-        VerticalLayout {
-            spacing: T.gap / 2;
-            Text {
-                text: getAmount(data.amount);
-                font-size: T.font4;
-                font-weight: 800;
-                horizontal-alignment: right;
-                vertical-alignment: center;
+        Text {
+            text: data[5];
+            font-size: T.font3;
+            font-weight: 800;
+            horizontal-alignment: right;
+            vertical-alignment: center;
+        }
+    }
 
-                color: {
-                    if data.amount > 0 {
-                        #00ff00ad
-                    } else {
-                        #ff0000ab
-                    }
+    tc := TouchArea { }
+
+    border-width: 1px;
+    border-color: tc.has-hover ? #41b9ff : transparent;
+}
+
+
+
+export component Records-List inherits Rectangle {
+
+    in property <[[string]]> data: [
+        ["Momos", "12th Mar 2026", "12:08 AM", "Fast Food", "Deduct", "500"],
+        ["Coca Cola", "21st Jun 2026", "06:08 PM", "Drinks", "Deduct", "1900"]
+    ];
+
+    Flickable {
+        HL {
+            alignment: space-around;
+
+            VerticalLayout {
+                padding: T.gap;
+                spacing: T.gap;
+
+                alignment: start;
+                for item in data: RecordsItem {
+                    data: item;
+                    min-width: 600px;
                 }
             }
         }

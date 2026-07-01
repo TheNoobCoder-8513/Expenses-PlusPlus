@@ -1,44 +1,80 @@
 import { Theme as T } from "../../Theme.slint";
 import {
     Sidebar,
-    Header,
     Button,
     HBarChart,
+    Page,
+    Base2,
+    VL,
+    Card,
+    HL,
+    Base3,
+    LR-List-Item,
+    Base4,
+    Base5,
+    LR-Text-Table,
 } from "../../Components/Components.slint";
 import { Track-Toolbar } from "Toolbar.slint";
-import { Track-Calendar } from "Calendar.slint";
-import { TabBar } from "../../Components/TabBar.slint";
+import { SVL, Base1 } from "../../Components/Base.slint";
+import {
+    LR-Text-Item,
+} from "../../Components/Item.slint";
 
 
-export component Track inherits Rectangle {
+import { Track-SidePane } from "Sidebar.slint";
 
-    VerticalLayout {
-        padding: T.gap * 2;
+
+
+
+export component Track inherits Page {
+
+    page-header: { label: "Track", desc: "Track your savings and expenditures over time here" };
+
+    HL {
         spacing: T.gap * 2;
+        VL {
+            spacing: T.gap * 2;
+            Card {
+                card-header: {
+                    label: "Monthly Expenditure Chart",
+                    desc: "Track your expenditure throughout last 30 days in a glance"
+                };
 
-        Header {
-            header: "Track";
-            description: "Track your savings and expenditures over time here";
-        }
+                HBarChart {
+                    max-height: 200px;
+                }
+            }
 
-        content := Rectangle {
-            background: T.bg2;
-            border-radius: T.gap;
+            HL {
+                alignment: start;
+                Card {
+                    min-width: 360px;
+                    card-header: { label: "This Week", desc: "Categorical expenses of this week" };
 
-            VerticalLayout {
-                padding: T.gap;
-                spacing: T.gap;
+                    Base1 {
+                        VL {
+                            padding: T.gap;
+                            LR-Text-Table {
+                                col-title: { lval: "Category", rval: "Expense" };
 
-                VerticalLayout {
-                    padding: T.gap;
-                    spacing: T.gap;
-
-                    Track-Toolbar { }
-
-                    Track-Calendar {
+                                //Mock data
+                                data: [
+                                    { lval: "Morning Coffee", rval: "$4.50" },
+                                    { lval: "Grocery Run", rval: "$42.15" },
+                                    { lval: "Transit Fare", rval: "$2.75" },
+                                    { lval: "Midday Meal", rval: "$14.80" },
+                                    { lval: "Snack/Water", rval: "$3.10" }
+                                ];
+                            }
+                        }
                     }
                 }
             }
+        }
+
+        Track-SidePane {
+            min-width: 320px;
+            max-width: 380px;
         }
     }
 }

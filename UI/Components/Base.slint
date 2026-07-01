@@ -1,0 +1,136 @@
+import { Theme as T } from "../Theme.slint";
+import { Header, HeaderSize } from "Header.slint";
+
+export component Base1 inherits Rectangle {
+    background: T.bg1;
+    border-radius: T.bor-radius;
+
+    @children
+}
+
+export component Base2 inherits Rectangle {
+    background: T.bg2;
+    border-radius: T.bor-radius;
+
+    @children
+}
+
+export component Base3 inherits Rectangle {
+    background: T.bg3;
+    border-radius: T.bor-radius;
+
+    @children
+}
+
+export component Base4 inherits Rectangle {
+    background: T.bg4;
+    border-radius: T.bor-radius;
+
+    @children
+}
+
+export component Base5 inherits Rectangle {
+    background: T.bg5;
+    border-radius: T.bor-radius;
+
+    @children
+}
+
+
+export component Page inherits Base1 {
+
+    in property <{ label: string, desc: string }> page-header: { label: "Page", desc:"This is Page description" };
+    private property <{ label-size: length, desc-size: length }> page-header-font-size: { label-size: T.font2, desc-size: T.font4 };
+
+    VerticalLayout {
+        padding: T.gap * 2;
+        spacing: T.gap * 2;
+
+        Header {
+            header: root.page-header;
+            header-font-size: root.page-header-font-size;
+        }
+
+        @children
+    }
+}
+
+
+export component HL inherits HorizontalLayout {
+    spacing: T.gap;
+
+    @children
+}
+
+export component VL inherits VerticalLayout {
+    spacing: T.gap;
+
+    @children
+}
+
+export component SHL inherits HL {
+    padding: T.gap;
+
+    @children
+}
+
+export component SVL inherits VL {
+    padding: T.gap;
+
+    @children
+}
+
+export component Card inherits Base2 {
+    in property <{ label: string, desc: string }> card-header: { label: "Card", desc:"This is card description" };
+
+    in property <HeaderSize> card-header-font-size: { label-size: T.font3, desc-size: T.font5 };
+    in property <{ label-color: color, desc-color: color }> card-header-color: { label-color: T.fg1, desc-color: T.fg3 };
+
+    out property <bool> has-hover <=> tc.has-hover;
+    callback clicked();
+
+    tc := TouchArea {
+        clicked => { root.clicked(); }
+    }
+
+    VerticalLayout {
+        padding-top: T.gap;
+
+        private property <length> pad: T.gap * 1.5;
+        padding-left: pad;
+        padding-right: pad;
+        padding-bottom: pad;
+        spacing: T.gap * 2;
+
+        Header {
+            header: root.card-header;
+            header-font-size: root.card-header-font-size;
+            header-color: root.card-header-color;
+        }
+
+        VL {
+            @children
+        }
+    }
+}
+
+export component Stat-Card inherits Base2 {
+
+    in property <{ label: string, desc: string }> stat: { label: "Value", desc:"Stat Description" };
+    in property <HeaderSize> stat-font-size: { label-size: T.font2, desc-size: T.font4 };
+
+    VL {
+        padding-top: T.gap;
+
+        private property <length> pad: T.gap * 1.5;
+        padding-left: pad;
+        padding-right: pad;
+        padding-bottom: pad;
+
+        Header {
+            header: root.stat;
+            header-font-size: stat-font-size;
+            header-color: { label-color: T.fg1, desc-color: T.fg3 };
+        }
+    }
+}

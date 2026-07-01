@@ -1,0 +1,84 @@
+import { Theme as T } from "../../Theme.slint";
+import { Card, LR-Text-Table } from "../../Components/Components.slint";
+import { Base3, SVL, HL, VL } from "../../Components/Base.slint";
+
+
+export component Track-SidePane inherits Card {
+
+    in property <int> start: 4;
+    in property <int> month: 2;
+    in-out property <int> selected-date: 27;
+
+    callback getDayData();
+
+    card-header: { label: "Calendar", desc: "Lookup activities on each day" };
+
+    Base3 {
+        SVL {
+            calendar := GridLayout {
+                height: self.preferred-height;
+
+                Row {
+                    for day in ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]: Text {
+                        text: day;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+
+                for row-in in 6: Row {
+                    for day in 7: Rectangle {
+                        height: T.font4 * 2;
+                        border-radius: self.height / 2;
+
+                        private property <int> starter: row-in * 7 + day + 1 - start + 1;
+
+                        background: tc.has-hover || starter == selected-date ? #21a6ff : transparent;
+
+                        tc := TouchArea {
+                            clicked => { root.selected-date = starter; }
+                        }
+
+                        HL {
+                            Text {
+                                text: {
+                                    if starter > 0 {
+                                        if month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12 {
+                                            if starter > 31 { "" } else { starter }
+                                        }
+                                        else if month == 2 || month == 4 || month == 6 || month == 9 || month == 11 {
+                                            if starter > 30 { "" } else { starter }
+                                        }
+                                        else { "" }
+                                    }
+                                    else { "" }
+                                };
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                                color: tc.has-hover || starter == selected-date ? black : white;
+                                font-weight: tc.has-hover || starter == selected-date ? 800 : 400;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Base3 {
+        VL {
+            padding: T.gap;
+            LR-Text-Table {
+                col-title: { lval: "Item", rval: "Amount" };
+                    //Mock data
+                    data: [
+                    { lval: "Morning Coffee", rval: "$4.50" },
+                    { lval: "Grocery Run", rval: "$42.15" },
+                    { lval: "Transit Fare", rval: "$2.75" },
+                    { lval: "Midday Meal", rval: "$14.80" },
+                    { lval: "Snack/Water", rval: "$3.10" }
+                ];
+            }
+        }
+    }
+}

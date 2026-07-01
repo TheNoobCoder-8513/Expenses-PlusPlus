@@ -1,109 +1,54 @@
 
 import { Theme as T } from "../../Theme.slint";
-import { Button, Placeholder, HBarChart } from "../../Components/Components.slint";
-import { RecordsItem } from "RecordItem.slint";
-import { Header } from "../../Components/Header.slint";
-export component Records inherits Rectangle {
-    // Text {
-    //     text: "Records";
-    //     height: parent.height;
-    //     width: parent.width;
-
-    //     horizontal-alignment: center;
-    //     vertical-alignment: center;
-    // }
-
-    VerticalLayout {
-        // padding-top: 100px;
-        padding-left: T.gap * 2;
-        padding-right: self.padding-left;
-        padding-bottom: T.gap * 2;
-        padding-top: self.padding-bottom;
-
-        spacing: T. gap * 2;
-
-        Header {
-            header: "Records";
-            description: "Add, modify, lookup and delete your records here.";
-        }
+import {
+    Page,
+    Base2,
+    VL,
+    HL,
+} from "../../Components/Components.slint";
+import { Records-List } from "RecordItem.slint";
+import { SVL, SHL } from "../../Components/Base.slint";
+import { InputText } from "../../Components/Input.slint";
+import { Record-Detail } from "../../DataTypes.slint";
+import { Glue } from "../../Glue.slint";
 
 
-        Rectangle {
-            min-width: 800px;
-            background: T.bg2;
-            border-radius: T.bor-radius;
 
-            VerticalLayout {
-                padding: T.gap * 2;
-                spacing: T.gap * 2;
+export component Records inherits Page {
 
-                VerticalLayout {
-                    spacing: T.gap;
+    private property <[Record-Detail]> data: Glue.get_Records();
 
-                    toolbar := Rectangle {
-                        background: T.bg1;
-                        border-radius: T.bor-radius;
+    page-header: { label: "Records", desc: "Add, modify, lookup and delete your records here." };
+    min-width: 800px;
 
-                        HorizontalLayout {
-                            padding: T.gap * 1.5;
-                            spacing: T.gap;
-                            alignment: space-between;
+    VL {
+        spacing: T.gap * 1.5;
+        toolbar := Base2 {
+            border-width: 1px;
+            border-color: #343434;
 
-                            HorizontalLayout {
-                                spacing: T.gap;
+            SHL {
+                alignment: end;
+                spacing: T.gap;
 
-                                Button {
-                                    title: "New";
-                                    image: @image-url("../../Assets/Icons/Add.png");
-                                    font-size: T.font5;
-                                    bg-color: T.fg1;
-                                }
+                HL {
 
-                                Text {
-                                    text: "70 records";
-                                    font-size: T.font5;
-
-                                    horizontal-alignment: center;
-                                    vertical-alignment: center;
-                                }
-                            }
-
-                            HorizontalLayout {
-                                spacing: T.gap;
-
-                                Text {
-                                    text: "$601.42";
-                                    font-size: T.font4;
-                                    font-weight: 800;
-                                    color: #3fff42;
-
-                                    horizontal-alignment: center;
-                                    vertical-alignment: center;
-                                }
-                            }
-                        }
+                    Text {
+                        text: "70 records";
+                        font-size: T.font4;
+                        color: T.fg3;
+                        horizontal-alignment: right;
+                        vertical-alignment: center;
                     }
 
-                    list := Rectangle {
-                        background: T.bg1;
-                        border-radius: T.bor-radius;
-
-                        VerticalLayout {
-                            alignment: start;
-                            padding: T.gap * 2;
-                            spacing: T.gap;
-
-                            RecordsItem { }
-
-                            RecordsItem { }
-
-                            RecordsItem { }
-
-                            Rectangle { }
-                        }
+                    InputText {
+                        placeholder: "Search";
+                        width: 150px;
                     }
                 }
             }
         }
+
+        Records-List { }
     }
 }
