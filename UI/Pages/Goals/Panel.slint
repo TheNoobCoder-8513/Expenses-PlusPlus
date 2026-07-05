@@ -1,0 +1,186 @@
+import { Theme as T } from "../../Theme.slint";
+import {
+    Card,
+    Header,
+    Base3,
+    Base2,
+    SVL,
+    VL,
+    Button,
+} from "../../Components/Components.slint";
+import { LR-Text-Item } from "../../Components/Item.slint";
+import { LR-Text-Table } from "../../Components/Table.slint";
+import { HL, Base1 } from "../../Components/Base.slint";
+import { Input-Item } from "../../Components/Input.slint";
+import { Goal-Detail } from "../../DataTypes.slint";
+import { Glue } from "../../Glue.slint";
+
+export component Goal-Form inherits Card {
+    card-header: { label: "New Goal", desc: "Create a new financial goal" };
+
+    private property <string> name;
+    private property <string> saved;
+    private property <string> total;
+
+    callback create-clicked();
+    callback discard-clicked();
+    callback refresh-required();
+
+    private property <bool> invalid: (root.saved.to-float() > root.total.to-float()) || (saved.to-float() > Glue.get_TotalAmount());
+
+    background: T.bg2;
+    border-radius: T.bor-radius;
+
+    VerticalLayout {
+        spacing: T.gap * 3;
+
+        Input-Item {
+            title: "Goal name";
+            placeholder: "My Goal";
+
+            input <=> name;
+        }
+
+        VL {
+            alignment: start;
+            Input-Item {
+                title: "Total Amount";
+                placeholder: "₹ 24,000";
+
+                input <=> total;
+            }
+
+            Input-Item {
+                title: "Saved Amount";
+                placeholder: "₹ 10,000";
+
+                input <=> saved;
+            }
+
+            HL {
+                alignment: start;
+
+                Text {
+                    text: "Available Balance: ";
+                    font-size: T.font4;
+                    color: T.fg3;
+                }
+
+                Text {
+                    text: "₹ 14,783";
+                    font-size: T.font4;
+                    color: T.fg2;
+                }
+            }
+
+            message := Text {
+                text: {
+                    if root.saved.to-float() > root.total.to-float() { "Goal's saved amount can not be more than goal's total amount" }
+                    else if (saved.to-float() > Glue.get_TotalAmount()) { "Not enough safe amount to allocate to this goal" }
+                    else { "" }
+                };
+                color: #ff6262;
+                font-size: T.font4;
+                wrap: word-wrap;
+            }
+        }
+    }
+
+    HL {
+        Button {
+            title: "Discard";
+            bg-color: #fe0000;
+
+            clicked => {
+                discard-clicked();
+            }
+        }
+
+        Button {
+            title: "Create";
+            bg-color: #3cb4ff;
+
+            clicked => {
+                if (Glue.add_Goals(name, total, saved) == false) {
+                    message.text = "Another goal exists with same name"
+                }
+                else {
+                    refresh-required();
+                    create-clicked();
+                }
+            }
+        }
+    }
+}
+
+export component Goal-Info inherits Card {
+    card-header: { label: root.goal.name, desc: "Modify Existing financial goal" };
+
+    in property <Goal-Detail> goal;
+    private property <string> total;
+    private property <string> saved;
+
+    callback cancel-clicked();
+    callback save-clicked();
+    callback refresh-required();
+
+    private property <bool> invalid: (root.saved.to-float() > root.total.to-float()) || (saved.to-float() > Glue.get_TotalAmount());
+
+    background: T.bg2;
+    border-radius: T.bor-radius;
+
+    VerticalLayout {
+        spacing: T.gap * 3;
+
+        VL {
+            alignment: start;
+            Input-Item {
+                title: "Total Amount";
+                placeholder: goal.total;
+                input <=> root.total;
+            }
+
+            Input-Item {
+                title: "Saved Amount";
+                placeholder: goal.saved;
+                input <=> root.saved;
+            }
+
+            message := Text {
+                text: {
+                    if root.saved.to-float() > root.total.to-float() { "Goal's saved amount can not be more than goal's total amount" }
+                    else if (saved.to-float() > Glue.get_TotalAmount()) { "Not enough safe amount to allocate to this goal" }
+                    else { "" }
+                };
+                color: #ff6262;
+                font-size: T.font4;
+                wrap: word-wrap;
+            }
+        }
+    }
+
+    HL {
+        Button {
+            title: "Cancel";
+            bg-color: #fe0000;
+
+            clicked => { cancel-clicked(); }
+        }
+
+        Button {
+            title: "Save";
+            enabled: root.invalid ? false : true;
+            bg-color: #3cb4ff;
+
+            clicked => {
+                if (Glue.update_Goals(goal.name, total, saved) == false) {
+                    message.text = "Updating goal failed due to some reason"
+                }
+                else {
+                    refresh-required();
+                    save-clicked();
+                }
+            }
+        }
+    }
+}

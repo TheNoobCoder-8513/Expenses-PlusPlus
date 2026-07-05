@@ -22,12 +22,15 @@ import {
 
 
 import { Track-SidePane } from "Sidebar.slint";
+import { Glue } from "../../Glue.slint";
 
 
 
 
 export component Track inherits Page {
+    private property <{ year: int, month: int, date: int }> present: Glue.get_CurrentDateBreakdown();
 
+    private property <{ year: int, month: int, date: int }> selected: Glue.get_CurrentDateBreakdown();
     page-header: { label: "Track", desc: "Track your savings and expenditures over time here" };
 
     HL {
@@ -49,22 +52,15 @@ export component Track inherits Page {
                 alignment: start;
                 Card {
                     min-width: 360px;
-                    card-header: { label: "This Week", desc: "Categorical expenses of this week" };
+                    card-header: { label: "This Month", desc: "Categorical activities within this month" };
 
                     Base1 {
                         VL {
                             padding: T.gap;
-                            LR-Text-Table {
+                            cat := LR-Text-Table {
                                 col-title: { lval: "Category", rval: "Expense" };
 
-                                //Mock data
-                                data: [
-                                    { lval: "Morning Coffee", rval: "$4.50" },
-                                    { lval: "Grocery Run", rval: "$42.15" },
-                                    { lval: "Transit Fare", rval: "$2.75" },
-                                    { lval: "Midday Meal", rval: "$14.80" },
-                                    { lval: "Snack/Water", rval: "$3.10" }
-                                ];
+                                data: Glue.get_MonthlyCategoryTotals(selected.year, selected.month);
                             }
                         }
                     }
@@ -75,6 +71,19 @@ export component Track inherits Page {
         Track-SidePane {
             min-width: 320px;
             max-width: 380px;
+
+            selected-date: present.date;
+            month-in: present.month - 1;
+            year-in: present.year - 2026;
+
+            selections(day, month, year) => {
+                selected.month = month;
+                selected.year = year;
+            }
+
+            monthChanged => {
+                // cat.data = Glue.get_MonthlyCategoryTotals(present.year.to-float(), present.month.to-float());
+            }
         }
     }
 }

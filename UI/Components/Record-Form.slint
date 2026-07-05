@@ -1,0 +1,112 @@
+import { Theme as T } from "../Theme.slint";
+import { Card, HL, VL } from "Base.slint";
+import { Input-Item } from "Input.slint";
+import { ComboBox, Button } from "Components.slint";
+import { Glue } from "../Glue.slint";
+
+export component Record-Form inherits Card {
+    card-header: { label: "Log Record", desc:"Log your day-to-day activity herein" };
+
+    private property <string> items: "";
+    private property <string> amount: "";
+    private property <string> added <=> type.active;
+    private property <string> category <=> cat.active;
+
+    callback cancel-clicked();
+    callback save-clicked();
+
+    border-width: 1px;
+    border-color: #a2a2a2;
+
+    VerticalLayout {
+        spacing: T.gap * 4;
+        VL {
+            alignment: start;
+            label := Input-Item {
+                title: "Items";
+                placeholder: "Item1, Item2, Item3";
+                input <=> root.items;
+            }
+
+            HL {
+                amt := Input-Item {
+                    title: "Amount";
+                    placeholder: "280";
+                    input <=> root.amount;
+                }
+
+                VerticalLayout {
+                    spacing: T.gap / 2;
+                    Text {
+                        text: "Type";
+                        color: T.fg2;
+                        font-size: T.font4;
+                    }
+
+                    type := ComboBox {
+                        data: ["Expense", "Income"];
+                    }
+                }
+            }
+
+            VerticalLayout {
+                spacing: T.gap / 2;
+                Text {
+                    text: "Category";
+                    color: T.fg2;
+                    font-size: T.font4;
+                }
+
+                cat := ComboBox {
+                    data: [
+                        "General",
+                        "Food",
+                        "Dining",
+                        "Clothes",
+                        "Shopping",
+                        "Fast Food",
+                        "Snacks",
+                        "Drinks",
+                        "Other"
+                    ];
+                }
+            }
+
+            message := Text {
+                text: {
+                    if root.items.is-empty { "The items name can not be empty" }
+                    else if amount.to-float() <= 0 { "Amount can not be -Ve or 0. Use 'Type' to switch amount type" }
+                    else { "" }
+                };
+                color: #ff6262;
+                font-size: T.font4;
+                wrap: word-wrap;
+            }
+        }
+
+        HL {
+            Button {
+                title: "Cancel";
+                bg-color: #fe0000;
+
+                clicked => {
+                    cancel-clicked();
+                }
+            }
+
+            Button {
+                title: "Save";
+                bg-color: #3cb4ff;
+                enabled: !root.items.is-empty || (root.amount.to-float() > 0);
+
+                clicked => {
+                    if (!items.is-empty || (amount.to-float() > 0)) {
+                        if (Glue.add_Records(items, category, added, amount) == true) {
+                            save-clicked();
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

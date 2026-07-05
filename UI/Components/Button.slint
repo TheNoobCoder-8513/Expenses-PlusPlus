@@ -8,15 +8,19 @@ export component Button inherits Rectangle {
     in property <color> font-color: T.bg1;
     in property <color> bg-color: T.fg1;
     in property <LayoutAlignment> alignment: center;
+    in property <bool> enabled: true;
     // in property <bool> accent: true;
     
+    out property <bool> has-hover <=> touch.has-hover;
     callback clicked();
 
     border-radius: 10px;
 
     touch := TouchArea {
         clicked => {
-            root.clicked();
+            if root.enabled {
+                root.clicked();
+            }
         }
     }
 
@@ -57,7 +61,7 @@ export component Button inherits Rectangle {
             background: bg-color.darker(0.2);
         }
         none when !touch.has-hover: {
-            background: bg-color;
+            background: root.enabled ? bg-color : T.bg5;
         }
     ]
 }

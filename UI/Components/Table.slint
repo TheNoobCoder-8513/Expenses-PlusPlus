@@ -10,14 +10,15 @@ export component LR-Text-Table inherits Base2 {
         spacing: T.gap / 2;
 
         VerticalLayout {
-            padding: T.gap / 2;
-            padding-left: T.gap;
-            padding-right: self.padding-left;
+            // padding: T.gap / 2;
+            // padding-left: T.gap;
+            // padding-right: self.padding-left;
 
             LR-Text-Item {
                 values: { lval: col-title.lval, rval: col-title.rval };
                 font-size: T.font4;
                 font-color: T.fg1;
+                background: transparent;
             }
 
             Rectangle {
@@ -29,17 +30,9 @@ export component LR-Text-Table inherits Base2 {
         Flickable {
             content := VerticalLayout {
                 spacing: T.gap / 2;
-                for item[in] in data: Base3 {
-                    HorizontalLayout {
-                        padding: T.gap / 2;
-                        padding-left: T.gap;
-                        padding-right: self.padding-left;
-
-                        LR-Text-Item {
-                            values: { lval: item.lval, rval: item.rval };
-                            font-size: (T.font5 + T.font4) / 2;
-                        }
-                    }
+                for item[in] in data: LR-Text-Item {
+                    values: { lval: item.lval, rval: item.rval };
+                    font-size: (T.font5 + T.font4) / 2;
                 }
             }
         }

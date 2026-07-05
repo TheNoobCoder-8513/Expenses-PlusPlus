@@ -4,9 +4,16 @@ export global Glue {
     pure callback get_FrozenAmount() -> float;
     pure callback get_TotalAmount() -> float;
 
-    pure callback get_DateDetail() -> Date-Detail;
+    pure callback get_TodaysRecords() -> [{ lval: string, rval: string }];
+    pure callback get_RecordsForDate(int, int, int) -> [{ lval: string, rval: string }];
+    pure callback get_MonthlyCategoryTotals(int, int) -> [{ lval: string, rval: string }];
 
     pure callback get_Goals() -> [Goal-Detail];
+    pure callback add_Goals(name: string, total: string, saved: string);
+    pure callback update_Goals(name: string, total: string, saved: string);
 
     pure callback get_Records() -> [Record-Detail];
+    pure callback add_Records(name: string, category: string, type: string, amount: string);
+
+    pure callback get_CurrentDateBreakdown() -> { year: int, month: int, date: int };
 }

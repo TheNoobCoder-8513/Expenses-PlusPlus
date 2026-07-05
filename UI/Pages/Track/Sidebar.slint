@@ -1,83 +1,124 @@
 import { Theme as T } from "../../Theme.slint";
-import { Card, LR-Text-Table } from "../../Components/Components.slint";
+import { Card, LR-Text-Table, Header } from "../../Components/Components.slint";
 import { Base3, SVL, HL, VL } from "../../Components/Base.slint";
+import { Glue } from "../../Glue.slint";
+import { ComboBox } from "../../Components/ComboBox.slint";
 
 
-export component Track-SidePane inherits Card {
+export component Track-SidePane inherits Rectangle {
 
     in property <int> start: 4;
-    in property <int> month: 2;
+    in-out property <int> year-in;
+    in-out property <int> month-in;
     in-out property <int> selected-date: 27;
 
-    callback getDayData();
+    callback selections(int, int, int);
+    callback monthChanged(int);
 
-    card-header: { label: "Calendar", desc: "Lookup activities on each day" };
+    VL {
+        HL {
+            Header {
+                header: { label: "Calendar", desc: "Lookup activities on each day" };
+            }
 
-    Base3 {
-        SVL {
-            calendar := GridLayout {
+            VL {
                 height: self.preferred-height;
+                mo := ComboBox {
+                    data: [
+                        "January",
+                        "February",
+                        "March",
+                        "April",
+                        "May",
+                        "June",
+                        "July",
+                        "August",
+                        "September",
+                        "October",
+                        "Novemeber",
+                        "December"
+                    ];
+                    active-index <=> month-in;
 
-                Row {
-                    for day in ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]: Text {
-                        text: day;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
+                    changed active-index => {
+                        selections(selected-date, self.active-index + 1, yr.active-index + 2026)
                     }
                 }
 
-                for row-in in 6: Row {
-                    for day in 7: Rectangle {
-                        height: T.font4 * 2;
-                        border-radius: self.height / 2;
+                yr := ComboBox {
+                    data: ["2026", "2027", "2028", "2029", "2030"];
+                    active-index <=> year-in;
 
-                        private property <int> starter: row-in * 7 + day + 1 - start + 1;
+                    changed active-index => {
+                        selections(selected-date, mo.active-index + 1, self.active-index + 2026)
+                    }
+                }
+            }
+        }
 
-                        background: tc.has-hover || starter == selected-date ? #21a6ff : transparent;
+        Base3 {
+            SVL {
+                calendar := GridLayout {
+                    height: self.preferred-height;
 
-                        tc := TouchArea {
-                            clicked => { root.selected-date = starter; }
+                    Row {
+                        for day in ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]: Text {
+                            text: day;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
                         }
+                    }
 
-                        HL {
-                            Text {
-                                text: {
-                                    if starter > 0 {
-                                        if month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12 {
-                                            if starter > 31 { "" } else { starter }
-                                        }
-                                        else if month == 2 || month == 4 || month == 6 || month == 9 || month == 11 {
-                                            if starter > 30 { "" } else { starter }
+                    for row-in in 6: Row {
+                        for day in 7: Rectangle {
+                            height: T.font4 * 2;
+                            border-radius: self.height / 2;
+
+                            private property <int> starter: row-in * 7 + day + 1 - start + 1;
+
+                            background: tc.has-hover || starter == selected-date ? #21a6ff : transparent;
+                            tc := TouchArea {
+                                clicked => {
+                                    if (starter > 0) {
+                                        root.selected-date = starter;
+                                        selections(selected-date, mo.active-index + 1, yr.active-index + 2026);
+                                    }
+                                }
+                            }
+
+                            HL {
+                                tx := Text {
+                                    text: {
+                                        if starter > 0 {
+                                            if month-in == 1 || month-in == 3 || month-in == 5 || month-in == 7 || month-in == 8 || month-in == 10 || month-in == 12 {
+                                                if starter > 31 { "" } else { starter }
+                                            }
+                                            else if month-in == 2 || month-in == 4 || month-in == 6 || month-in == 9 || month-in == 11 {
+                                                if starter > 30 { "" } else { starter }
+                                            }
+                                            else { "" }
                                         }
                                         else { "" }
-                                    }
-                                    else { "" }
-                                };
-                                horizontal-alignment: center;
-                                vertical-alignment: center;
-                                color: tc.has-hover || starter == selected-date ? black : white;
-                                font-weight: tc.has-hover || starter == selected-date ? 800 : 400;
+                                    };
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                    color: ((tx.text.to-float() > 0) && tc.has-hover) || (starter > 0 && starter == selected-date) ? black : white;
+                                    font-weight: tc.has-hover || starter == selected-date ? 800 : 400;
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
 
-    Base3 {
-        VL {
-            padding: T.gap;
-            LR-Text-Table {
-                col-title: { lval: "Item", rval: "Amount" };
-                    //Mock data
-                    data: [
-                    { lval: "Morning Coffee", rval: "$4.50" },
-                    { lval: "Grocery Run", rval: "$42.15" },
-                    { lval: "Transit Fare", rval: "$2.75" },
-                    { lval: "Midday Meal", rval: "$14.80" },
-                    { lval: "Snack/Water", rval: "$3.10" }
-                ];
+        Base3 {
+            VL {
+                padding: T.gap;
+                LR-Text-Table {
+                    col-title: { lval: "Item", rval: "Amount" };
+                    data: Glue.get_RecordsForDate(yr.active-index + 2026, mo.active-index + 1, root.selected-date);
+                }
             }
         }
     }

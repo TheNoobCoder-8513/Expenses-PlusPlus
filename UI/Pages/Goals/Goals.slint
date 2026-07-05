@@ -1,31 +1,39 @@
 
 import { Theme as T } from "../../Theme.slint";
-import {
-    Header,
-    VL,
-    HL,
-    Base2,
-    Base3,
-    Card,
-} from "../../Components/Components.slint";
+import { VL, HL } from "../../Components/Components.slint";
 import { Goal-Card, Goal-Add-Card } from "GoalCard.slint";
-import { New-Goal-Form } from "NewGoal.slint";
 import { Page, SVL } from "../../Components/Base.slint";
 import { Goal-Detail } from "../../DataTypes.slint";
 import { Goal-Summary } from "Summary.slint";
+import { Goal-Form, Goal-Info } from "Panel.slint"; 
 import { Glue } from "../../Glue.slint";
 
 
 export component Goals inherits Page {
+
     private property <float> total-amount: Glue.get_TotalAmount();
     private property <float> frozen-amount: Glue.get_FrozenAmount();
     private property <[Goal-Detail]> goals: Glue.get_Goals();
+
+    init => { load(); }
+
+    function load() {
+        total-amount = Glue.get_TotalAmount();
+        frozen-amount = Glue.get_FrozenAmount();
+        goals = Glue.get_Goals();
+    }
+
+    private property <int> selected-goal-index: -1;
+    private property <bool> detail-sidebar: false;
+    private property <bool> new-goal-sidebar: false;
 
     min-width: 800px;
     max-width: 1200px;
     page-header: { label: "Goals", desc: "Manage your Goals about expenditures, savings here" };
 
     HL {
+        alignment: stretch;
+        spacing: T.gap * 2;
 
         detail := Goal-Summary {
             min-width: 360px;
@@ -36,44 +44,69 @@ export component Goals inherits Page {
             HL {
                 alignment: space-around;
                 VL {
-
                     spacing: T.gap * 2;
                     alignment: goals.length > 0 ? start : center;
 
-                    Goal-Add-Card {
-                        clicked => { add.show(); }
-                        add := PopupWindow {
-                            width: self.preferred-width;
-
-                            close-policy: no-auto-close;
-
-                            New-Goal-Form {
-                                border-width: 1px;
-                                border-color: T.fg3;
-
-                                create-clicked => {
-                                    parent.close()
-                                }
-
-                                discard-clicked => {
-                                    parent.close();
-                                }
-                            }
+                    new := Goal-Add-Card {
+                        clicked => {
+                            root.detail-sidebar = false;
+                            root.new-goal-sidebar = true;
                         }
                     }
 
                     for item[index] in goals: Goal-Card {
                         data: item;
                         min-width: 600px;
+
                         clicked => {
+                            root.new-goal-sidebar = false;
+                            root.selected-goal-index = index;
+                            root.detail-sidebar = true;
                         }
                     }
                 }
             }
         }
 
-        // Goal-Detail {
-        //     min-width: 400px;
-        // }
+        if root.detail-sidebar || root.new-goal-sidebar: HL {
+            max-width: 420px;
+            min-width: 360px;
+
+            Rectangle {
+                width: 2px;
+                background: T.fg3;
+            }
+
+            if new-goal-sidebar: Goal-Form {
+
+                refresh-required => {
+                    root.load();
+                }
+
+                create-clicked => {
+                    root.new-goal-sidebar = false;
+                }
+
+                discard-clicked => {
+                    root.new-goal-sidebar = false;
+                }
+            }
+
+            if detail-sidebar: Goal-Info {
+                goal: goals[selected-goal-index];
+
+                refresh-required => {
+                    root.load();
+                }
+
+                cancel-clicked => {
+                    root.detail-sidebar = false;
+                }
+
+                save-clicked => {
+                    root.detail-sidebar = false;
+                }
+            }
+        }
     }
 }

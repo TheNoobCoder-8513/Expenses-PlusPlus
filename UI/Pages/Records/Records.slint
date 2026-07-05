@@ -11,10 +11,16 @@ import { SVL, SHL } from "../../Components/Base.slint";
 import { InputText } from "../../Components/Input.slint";
 import { Record-Detail } from "../../DataTypes.slint";
 import { Glue } from "../../Glue.slint";
+import { Button } from "../../Components/Button.slint";
+import { Record-Form } from "../../Components/Record-Form.slint";
 
 
 
 export component Records inherits Page {
+
+    function load() {
+        data = Glue.get_Records();
+    }
 
     private property <[Record-Detail]> data: Glue.get_Records();
 
@@ -28,13 +34,38 @@ export component Records inherits Page {
             border-color: #343434;
 
             SHL {
-                alignment: end;
+                alignment: space-between;
                 spacing: T.gap;
 
-                HL {
+                Button {
+                    title: "New record";
+                    bg-color: T.fg2;
 
+                    clicked => {
+                        add.show();
+                    }
+
+                    add := PopupWindow {
+                        x: parent.width;
+                        y: parent.height;
+
+                        close-policy: no-auto-close;
+                        Record-Form {
+                            cancel-clicked => {
+                                parent.close();
+                            }
+
+                            save-clicked => {
+                                parent.close();
+                                load();
+                            }
+                        }
+                    }
+                }
+
+                HL {
                     Text {
-                        text: "70 records";
+                        text: root.data.length + " records";
                         font-size: T.font4;
                         color: T.fg3;
                         horizontal-alignment: right;
@@ -49,6 +80,8 @@ export component Records inherits Page {
             }
         }
 
-        Records-List { }
+        Records-List {
+            data: root.data;
+        }
     }
 }

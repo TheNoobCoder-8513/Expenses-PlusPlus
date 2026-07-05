@@ -6,92 +6,105 @@ import {
     VL,
     Stat-Card,
     HL,
+    Button,
+    Base2,
 } from "../../Components/Components.slint";
 import { Goal-Detail } from "../../DataTypes.slint";
 import { SVL } from "../../Components/Base.slint";
 
 
-export component Goal-Card inherits Card {
-
+export component Goal-Card inherits Base2 {
     in property <Goal-Detail> data;
-
-    card-header: { label: data.name, desc: data.date + "   " + data.time };
-    card-header-color: { label-color: T.fg2, desc-color: T.fg3 };
-
-    // height: self.preferred-height;
-    border-width: 2px;
-    border-color: self.has-hover ? #0080ffbe : transparent;
-
     private property <float> percent: root.data.saved / root.data.total * 100;
 
-    contents := VerticalLayout {
-        spacing: T.gap;
+    callback clicked();
 
+    border-width: 2px;
+    border-color: tc.has-hover ? #0080ffbe : transparent;
+
+    tc := TouchArea {
+        clicked => { root.clicked() }
+    }
+
+    SVL {
         HL {
-            alignment: start;
-
-            for item in [
-                { title: "Total Amount", amount: root.data.total },
-                { title: "Saved Amount", amount:root.data.saved }
-            ]: Stat-Card {
-                background: T.bg3;
-                stat: { label: item.amount, desc: item.title };
-                stat-font-size: { label-size: T.font4, desc-size: T.font5 };
+            alignment: space-between;
+            Header {
+                header: { label: data.name, desc: data.date + "   " + data.time };
+                header-color: { label-color: T.fg1, desc-color: T.fg3 };
+                header-font-size: { label-size: T.font3, desc-size: T.font5 };
             }
         }
 
-        Base3 {
-            height: self.preferred-height;
-            VL {
-                padding: T.gap;
-                HL {
-                    Text {
-                        text: "Progress";
-                        font-size: T.font4;
-                        color: T.fg2;
-                        horizontal-alignment: left;
-                        vertical-alignment: center;
-                    }
+        contents := VerticalLayout {
+            spacing: T.gap;
 
-                    Text {
-                        text: percent.to-fixed(2) + " %";
-                        font-size: T.font4;
-                        horizontal-alignment: right;
-                        vertical-alignment: center;
+            HL {
+                alignment: start;
 
-                        color: {
-                            if percent < 20.00 { #ff3636; }
-                            else if percent < 40.00 { #ff9114; }
-                            else if percent < 80.00 { #51aeff; }
-                            else {
-                                #00ff3c;
-                            }
-                        }
-                    }
+                for item in [
+                    { title: "Total Amount", amount: root.data.total },
+                    { title: "Saved Amount", amount:root.data.saved }
+                ]: Stat-Card {
+                    background: T.bg3;
+                    stat: { label: item.amount, desc: item.title };
+                    stat-font-size: { label-size: T.font4, desc-size: T.font5 };
                 }
+            }
 
-                fill-chart := Rectangle {
-                    height: 20px;
-                    border-radius: T.bor-radius;
-                    background: T.bg1;
-
-                    Rectangle {
-                        border-radius: T.bor-radius;
-                        border-width: 1px;
-
-                        background: {
-                            if percent < 20.00 { #ff0000ce; }
-                            else if percent < 40.00 { #ff8400b6; }
-                            else if percent < 80.00 { #0088ffbb; }
-                            else {
-                                #00ff3ca4;
-                            }
+            Base3 {
+                height: self.preferred-height;
+                VL {
+                    padding: T.gap;
+                    HL {
+                        Text {
+                            text: "Progress";
+                            font-size: T.font4;
+                            color: T.fg2;
+                            horizontal-alignment: left;
+                            vertical-alignment: center;
                         }
 
-                        height: 10px;
-                        x: 5px;
-                        y: 5px;
-                        width: (parent.width - 10px) * root.percent / 100;
+                        Text {
+                            text: percent.to-fixed(2) + " %";
+                            font-size: T.font4;
+                            horizontal-alignment: right;
+                            vertical-alignment: center;
+
+                            color: {
+                                if percent < 20.00 { #ff3636; }
+                                else if percent < 40.00 { #ff9114; }
+                                else if percent < 80.00 { #51aeff; }
+                                else {
+                                    #00ff3c;
+                                }
+                            }
+                        }
+                    }
+
+                    fill-chart := Rectangle {
+                        height: 20px;
+                        border-radius: T.bor-radius;
+                        background: T.bg1;
+
+                        Rectangle {
+                            border-radius: T.bor-radius;
+                            border-width: 1px;
+
+                            background: {
+                                if percent < 20.00 { #ff0000ce; }
+                                else if percent < 40.00 { #ff8400b6; }
+                                else if percent < 80.00 { #0088ffbb; }
+                                else {
+                                    #00ff3ca4;
+                                }
+                            }
+
+                            height: 10px;
+                            x: 5px;
+                            y: 5px;
+                            width: (parent.width - 10px) * root.percent / 100;
+                        }
                     }
                 }
             }

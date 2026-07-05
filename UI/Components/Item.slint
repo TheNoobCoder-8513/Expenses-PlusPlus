@@ -40,19 +40,29 @@ export component LR-List-Item inherits Rectangle {
     }
 }
 
-export component LR-Text-Item inherits HL {
+export component LR-Text-Item inherits Rectangle {
     in property <{ lval: string, rval: string }> values: { lval: "Left", rval: "Right" };
     in property <color> font-color: T.fg2;
     in property <length> font-size;
 
     height: self.preferred-height;
+    border-radius: T.bor-radius;
     
-    alignment: space-between;
 
-    for item in [values.lval, values.rval]: Text {
-        text: item;
-        color: root.font-color;
-        font-size: root.font-size;
-        vertical-alignment: center;
+    HorizontalLayout {
+        padding: T.gap / 2;
+        padding-left: T.gap;
+        padding-right: self.padding-left;
+
+        alignment: space-between;
+
+        for item in [values.lval, values.rval]: Text {
+            text: item;
+            color: values.rval.is-float() ? (values.rval.to-float() < 0 ? #ff4141: #69ff48) : T.fg1;
+            font-size: root.font-size;
+            vertical-alignment: center;
+        }
     }
+
+    background: values.rval.is-float() ? (values.rval.to-float() < 0 ? #ff41413a: #69ff483d) : T.bg3;
 }

@@ -55,7 +55,6 @@ export component InputText inherits Rectangle {
 
                         edited => {
                             root.input = input-field.text;
-                            debug(input);
                         }
 
                         accepted => {
@@ -76,6 +75,7 @@ export component Input-Item inherits Rectangle {
     in property <string> title: "Title";
     in property <string> placeholder: "Placeholder";
     in property <color> title-color: T.fg2;
+    in-out property <string> input: "";
 
     height: self.preferred-height;
 
@@ -91,6 +91,7 @@ export component Input-Item inherits Rectangle {
         InputText {
             placeholder: root.placeholder;
             height: T.font4 * 2;
+            input <=> root.input;
         }
     }
 }

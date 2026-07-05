@@ -1,15 +1,16 @@
 import { Theme as T } from "../../Theme.slint";
 import { Base3, HL } from "../../Components/Components.slint";
 import { Base4, Base2, VL, SVL, Base1 } from "../../Components/Base.slint";
+import { Record-Detail } from "../../DataTypes.slint";
 
 export component RecordsItem inherits Base3 {
 
-    in property <[string]> data:["Momos", "12th Mar 2026", "12:08 AM", "Fast Food", "Deduct", "500"];
+    in property <Record-Detail> data;
 
     HL {
-        padding-top: T.gap / 2;
+        padding-top: T.gap;
         padding-bottom: self.padding-top;
-        padding-left: T.gap;
+        padding-left: T.gap * 2;
         padding-right: self.padding-left;
         spacing: T.gap * 2;
         alignment: space-between;
@@ -18,9 +19,9 @@ export component RecordsItem inherits Base3 {
             spacing: T.gap / 2;
 
             Text {
-                text: data[0];
+                text: data.name;
                 font-size: T.font3;
-                color: T.fg1;
+                color: T.fg2;
                 horizontal-alignment: left;
                 vertical-alignment: center;
             }
@@ -29,25 +30,25 @@ export component RecordsItem inherits Base3 {
                 spacing: T.gap * 2;
 
                 Text {
-                    text: data[1];
+                    text: data.date;
                     font-size: T.font5;
-                    color: T.fg2;
+                    color: T.fg3;
                     horizontal-alignment: left;
                     vertical-alignment: center;
                 }
 
                 Text {
-                    text: data[2];
+                    text: data.time;
                     font-size: T.font5;
-                    color: T.fg2;
+                    color: T.fg3;
                     horizontal-alignment: left;
                     vertical-alignment: center;
                 }
 
                 Text {
-                    text: data[3];
+                    text: data.category;
                     font-size: T.font5;
-                    color: T.fg2;
+                    color: T.fg3;
                     horizontal-alignment: left;
                     vertical-alignment: center;
                 }
@@ -55,8 +56,9 @@ export component RecordsItem inherits Base3 {
         }
 
         Text {
-            text: data[5];
+            text: data.amount > 0 ? data.amount: abs(data.amount);
             font-size: T.font3;
+            color: data.amount < 0 ? #ff4d4d: #5cff66;
             font-weight: 800;
             horizontal-alignment: right;
             vertical-alignment: center;
@@ -66,6 +68,7 @@ export component RecordsItem inherits Base3 {
     tc := TouchArea { }
 
     border-width: 1px;
+    // background: data.amount < 0 ? #ff000016: #00ff111f;
     border-color: tc.has-hover ? #41b9ff : transparent;
 }
 
@@ -73,10 +76,7 @@ export component RecordsItem inherits Base3 {
 
 export component Records-List inherits Rectangle {
 
-    in property <[[string]]> data: [
-        ["Momos", "12th Mar 2026", "12:08 AM", "Fast Food", "Deduct", "500"],
-        ["Coca Cola", "21st Jun 2026", "06:08 PM", "Drinks", "Deduct", "1900"]
-    ];
+    in property <[Record-Detail]> data;
 
     Flickable {
         HL {
@@ -84,12 +84,12 @@ export component Records-List inherits Rectangle {
 
             VerticalLayout {
                 padding: T.gap;
-                spacing: T.gap;
+                spacing: T.gap * 2;
 
                 alignment: start;
                 for item in data: RecordsItem {
                     data: item;
-                    min-width: 600px;
+                    min-width: 700px;
                 }
             }
         }
